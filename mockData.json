@@ -1,0 +1,26 @@
+{
+    "task1" : {
+        "imageSrc": "testing.com", 
+        "title": "task1",
+        "assignee": "Daphna",
+        "creationDate": "01/30/2023 @ 2:55pm",
+        "status": "Open",
+        "realtedTasks": "task3"
+    },
+    "task2" : {
+        "imageSrc": "testing.com", 
+        "title": "task2",
+        "assignee": "Daphna",
+        "creationDate": "02/30/2023 @ 4:55pm",
+        "status": "Open",
+        "realtedTasks": "task3"
+    },
+    "task3" : {
+        "imageSrc": "testing.com", 
+        "title": "task3",
+        "assignee": "Itamar",
+        "creationDate": "03/30/2023 @ 2:55pm",
+        "status": "Closed",
+        "realtedTasks": "task3"
+    }
+}
