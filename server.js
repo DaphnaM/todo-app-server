@@ -12,13 +12,13 @@ const db = mongoose.connection;
 db.on("error", (error) => console.error(error));
 db.once("open", () => console.log("Connected to db"));
 db.once("open", () => console.log("Server star to db"));
-// MongoClient.connect('mongo')
 
 const newDate = () => {
   const now = new Date();
   return now.toDateString();
 };
 
+//Mock data
 let tasks = [
   {
     id: 1,
@@ -50,7 +50,7 @@ let tasks = [
     subTasks: [1, 2],
   },
 ];
-app.use(bodyParser.json()); // express.json()?
+app.use(bodyParser.json());
 
 app.get("/tasks", (req, res) => {
   res.json(tasks);
