@@ -1,4 +1,3 @@
-const { response } = require("express");
 const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
@@ -8,7 +7,7 @@ app.use(cors());
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost/tasks", { useNewUrlParser: true });
 const db = mongoose.connection;
-// const MongoClient = require('mongodb').MongoClient
+const MongoClient = require("mongodb").MongoClient;
 db.on("error", (error) => console.error(error));
 db.once("open", () => console.log("Connected to db"));
 db.once("open", () => console.log("Server star to db"));
@@ -18,38 +17,135 @@ const newDate = () => {
   return now.toDateString();
 };
 
+const daphanimg =
+  "https://earthlette.com.au/wp-content/uploads/2016/10/Jem-final-profile-pic-circle2.png";
+const omerimg =
+  "https://themusclemedics.com/wp-content/uploads/2018/04/Circle-Profile-PNG.png";
+const aleximg =
+  "https://www.coachcarson.com/wp-content/uploads/2018/09/Chad-Profile-pic-circle.png";
 //Mock data
 let tasks = [
   {
     id: 1,
-    title: "Taking out the trash 3",
-    assignee: "John Doe",
+    title: "Take out the trash",
+    assignee: "Omer",
     creationDate: newDate(),
-    status: "Done",
-    imageSrc:
-      "https://icons-for-free.com/iconfiles/png/512/avatar+circle+male+profile+user+icon-1320196710301016992.png",
+    status: "New",
+    imageSrc: omerimg,
+    relatedTasks: [2],
   },
   {
     id: 2,
-    title: "Task 2",
-    assignee: "John Doe",
+    title: "Cook dinner",
+    assignee: "Alex",
     creationDate: newDate(),
     status: "In Progress",
-    imageSrc:
-      "https://icons-for-free.com/iconfiles/png/512/avatar+circle+male+profile+user+icon-1320196710301016992.png",
+    imageSrc: aleximg,
+    relatedTasks: [1],
   },
   {
     id: 3,
-    title: "Task 3",
-    assignee: "John Doe",
+    title: "Clean room",
+    assignee: "Daphna",
+    creationDate: newDate(),
+    status: "New",
+    imageSrc: daphanimg,
+    parentTask: null,
+    relatedTasks: [],
+  },
+  {
+    id: 4,
+    title: "Make cake",
+    assignee: "Omer",
     creationDate: newDate(),
     status: "Done",
-    imageSrc:
-      "https://icons-for-free.com/iconfiles/png/512/avatar+circle+male+profile+user+icon-1320196710301016992.png",
+    imageSrc: omerimg,
+    relatedTasks: [2],
+  },
+  {
+    id: 5,
+    title: "Buy gift",
+    assignee: "Alex",
+    creationDate: newDate(),
+    status: "In Progress",
+    imageSrc: aleximg,
+    relatedTasks: [1],
+  },
+  {
+    id: 6,
+    title: "Clean room 2",
+    assignee: "Daphna",
+    creationDate: newDate(),
+    status: "Done",
+    imageSrc: daphanimg,
     parentTask: null,
-    subTasks: [1, 2],
+    relatedTasks: [],
+  },
+  {
+    id: 7,
+    title: "Get mail",
+    assignee: "Omer",
+    creationDate: newDate(),
+    status: "Done",
+    imageSrc: omerimg,
+    relatedTasks: [2],
+  },
+  {
+    id: 8,
+    title: "Order from amazon",
+    assignee: "Alex",
+    creationDate: newDate(),
+    status: "In Progress",
+    imageSrc: aleximg,
+    relatedTasks: [1],
+  },
+  {
+    id: 9,
+    title: "Water plants",
+    assignee: "Daphna",
+    creationDate: newDate(),
+    status: "Done",
+    imageSrc: daphanimg,
+    parentTask: null,
+    relatedTasks: [],
+  },
+  {
+    id: 10,
+    title: "Do homework",
+    assignee: "Omer",
+    creationDate: newDate(),
+    status: "Done",
+    imageSrc: omerimg,
+    relatedTasks: [2],
+  },
+  {
+    id: 11,
+    title: "Clean sofa",
+    assignee: "Alex",
+    creationDate: newDate(),
+    status: "In Progress",
+    imageSrc: aleximg,
+    relatedTasks: [1],
+  },
+  {
+    id: 12,
+    title: "Clean floor",
+    assignee: "Daphna",
+    creationDate: newDate(),
+    status: "Done",
+    imageSrc: daphanimg,
+    parentTask: null,
+    relatedTasks: [],
   },
 ];
+
+const pickImg = (updatedTask) => {
+  if ((updatedTask.assignee = ""))
+    return "https://icons-for-free.com/iconfiles/png/512/avata…le+male+profile+user+icon-1320196710301016992.png";
+  if ((updatedTask.assignee = "Daphna")) return daphanimg;
+  if ((updatedTask.assignee = "Alex")) return aleximg;
+  if ((updatedTask.assignee = "Omer")) return omerimg;
+};
 app.use(bodyParser.json());
 
 app.get("/tasks", (req, res) => {
@@ -57,8 +153,18 @@ app.get("/tasks", (req, res) => {
 });
 
 app.post("/tasks", (req, res) => {
-  console.log("posting");
   const newTask = req.body;
+  newTask.creationDate = newDate();
+  if ((newTask.imageSrc = ""))
+    newTask.imageSrc =
+      "https://earthlette.com.au/wp-content/uploads/2016/10/Jem-final-profile-pic-circle2.png";
+  if ((newTask.imageSrc = "Daphna")) newTask.imageSrc = daphanimg;
+  if ((newTask.imageSrc = "Alex")) {
+    newTask.imageSrc = aleximg;
+  }
+  if ((newTask.imageSrc = "Omer")) {
+    newTask.imageSrc = omerimg;
+  }
 
   const lastId = tasks.length === 0 ? 0 : tasks[tasks.length - 1].id;
   const newId = lastId + 1;
@@ -78,13 +184,13 @@ app.delete("/task/:id", (req, res) => {
 app.put("/task/:id", (req, res) => {
   const editedTaskId = Number(req.params.id);
   const updatedTask = req.body;
-  tasks.map((task) => {
+
+  //updatedTask.imageSrc = pickImg(updatedTask);
+  tasks = tasks.map((task) => {
     if (task.id !== editedTaskId) return task;
-
-    task = updatedTask;
-
-    return task;
+    return updatedTask;
   });
+
   const editedTask = tasks.find((task) => task.id === editedTaskId);
   res.json(editedTask);
 });
